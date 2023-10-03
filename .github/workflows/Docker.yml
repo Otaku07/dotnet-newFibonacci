@@ -27,6 +27,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: MLOpsPython
     
     steps:
       - uses: actions/checkout@v3
@@ -66,5 +67,3 @@ jobs:
           push: true
           tags: ${{ inputs.image_name }}:${{ inputs.image_version }}
           labels: ${{ steps.meta.outputs.labels }}
-          
-        
