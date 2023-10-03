@@ -66,3 +66,5 @@ jobs:
           push: true
           tags: ${{ inputs.image_name }}:${{ inputs.image_version }}
           labels: ${{ steps.meta.outputs.labels }}
+          
+        
