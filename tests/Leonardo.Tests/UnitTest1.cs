@@ -18,8 +18,8 @@ public class UnitTest1
         
         var results = await new Fibonacci(fibonacciDataContext).RunAsync(new[] { "40", "41", "42" });
         Assert.Equal(3, results.Count);
-        Assert.Equal(165580141, results[0]);
-        Assert.Equal(267914296, results[1]);
-        Assert.Equal(433494437, results[2]);
+        Assert.Equal(102334155, results[0]);
+        Assert.Equal(165580141, results[1]);
+        Assert.Equal(267914296, results[2]);
     }
 }
