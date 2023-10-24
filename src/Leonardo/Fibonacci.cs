@@ -1,18 +1,27 @@
 ﻿using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 
 namespace Leonardo;
 
 public class Fibonacci
 {
-    public static int Run(int i)
+    private readonly FibonacciDataContext _context;
+
+    public Fibonacci(FibonacciDataContext context)
+    {
+        _context = context;
+    }
+    
+    public int Run(int i)
     {
         if (i <= 2)
             return 1;
         return Run(i - 1) + Run(i - 2);
     }
     
-    public static async Task<IList<int>> RunAsync(string[] args)
+    public async Task<IList<int>> RunAsync(string[] args)
     {
+ 
         if (args.Length >= 100)
         {
             throw new ArgumentException("Too much");
@@ -23,23 +32,41 @@ public class Fibonacci
         var tasks = new List<Task<int>>();
         foreach(var arg in args)
         {
-            var task = Task.Run(() =>
+            var tfibonacci = await _context.TFibonaccis
+                .Where(t => t.FibInput == int.Parse(arg))
+                .FirstOrDefaultAsync();
+
+            if (tfibonacci == null)
             {
-                var result = Fibonacci.Run(int.Parse(arg));
-                Console.WriteLine($"Elapsed time: {stopwatch.ElapsedMilliseconds} ms {arg}");
-                return result;
-            });
-            tasks.Add(task);
+                var task = Task.Run(() =>
+                {
+                    var result = Fibonacci.Run(int.Parse(arg));
+                    Console.WriteLine($"Elapsed time: {stopwatch.ElapsedMilliseconds} ms {arg}");
+                    return result;
+                });
+                tasks.Add(task);
+            } else {
+                tasks.Add(Task.FromResult((int)tfibonacci.FibOutput) );
+            }
         }
         foreach (var task in tasks)
         {
+            
             var result = await task;
+            _context.TFibonaccis.Add(new TFibonacci()
+            {
+                FibOutput = result,
+                FibInput = int.Parse(args[tasks.IndexOf(task)]),
+                FibCreatedTimestamp = DateTime.Now
+            });
             Console.WriteLine($"Result: {result}");
             results.Add(result);
         }
         stopwatch.Stop();
         Console.WriteLine("Total elapsed time: {0} ms", stopwatch.ElapsedMilliseconds);
 
+        await _context.SaveChangesAsync();
+        
         return results;
     }
 }

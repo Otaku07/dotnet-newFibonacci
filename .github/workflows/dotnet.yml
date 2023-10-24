@@ -35,7 +35,7 @@ jobs:
     needs: tags
     uses: ./.github/workflows/Docker.yml
     with:
-      image_name: "otakura237/fibonacci"
+      image_name: "guillaumechervetlunique/fibonacci"
       image_version: "${{ needs.tags.outputs.new_version }}"
       image_build_args: ""
       image_context: .
@@ -43,20 +43,20 @@ jobs:
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  publish_docker:
-    needs: [tags, build_docker]
-    runs-on: ubuntu-latest
-    steps:
-    - name: azure login
-      uses: azure/login@v1
-      with:
-        # az ad sp create-for-rbac --name "azure-admin" --role contributor --scopes /subscriptions/<subscription-id> --sdk-auth
-        creds: ${{secrets.AZURE_CREDENTIALS}}
-    - name: Deploy container
-      run: |
-        # https://learn.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az-container-create()
-        az group create --name mon-resource-group --location northeurope
-        az container create --resource-group mon-resource-group --name fibonacci-esperance --dns-name-label fibonacci-esperance --image docker.io/otakura237/fibonacci:${{ needs.tags.outputs.new_version }} --ports 8080
+  #publish_docker:
+  #  needs: [tags, build_docker]
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #  - name: azure login
+  #    uses: azure/login@v1
+  #    with:
+  #      # az ad sp create-for-rbac --name "azure-admin" --role contributor --scopes /subscriptions/<subscription-id> --sdk-auth
+  #      creds: ${{secrets.AZURE_CREDENTIALS}}
+  #  - name: Deploy container
+  #    run: |
+  #      # https://learn.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az-container-create()
+  #      az group create --name mon-resource-group --location northeurope
+  #      az container create --resource-group mon-resource-group --name fibonacci-guillaume --dns-name-label fibonacci-guillaume --image docker.io/guillaumechervetlunique/fibonacci:${{ needs.tags.outputs.new_version }} --ports 8080
   build:
     needs: tags
     runs-on: ubuntu-latest

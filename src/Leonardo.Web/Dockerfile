@@ -9,5 +9,5 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:8.0 AS final
 WORKDIR /app
 COPY --from=build /publish .
 #EXPOSE 5000
-#ENV ASPNETCORE_URLS=http://%2A:5000/
+#ENV ASPNETCORE_URLS=http://*:5000
 ENTRYPOINT ["/app/Leonardo.Web"]
