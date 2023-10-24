@@ -1,4 +1,5 @@
 using Leonardo;
+using var context = new FibonacciDataContext();
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
@@ -6,7 +7,7 @@ var app = builder.Build();
 app.MapGet("/", () => "Hello World! 3");
 
 app.MapGet("/Fibonacci", 
-    async () => await Fibonacci.RunAsync(new []{"44", "43"}));
+    async () => await new Fibonacci(context).RunAsync(new []{"44", "43"}));
 
 /*app.Run(context =>
 {
